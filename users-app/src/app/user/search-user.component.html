@@ -1,0 +1,107 @@
+<h2>Search Users:</h2>
+<div class="container">
+    <input type="text" class="form-control" placeholder="Search Users..." #searchBox (keyup)="search(searchBox.value)">
+    <br>
+    <div *ngIf="!isLoaded">
+        <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+    </div>
+
+    <div *ngIf="!isEmpty">
+        <table class="table table-hover">
+            <tr class="link">
+                <th (click)="setOrder('id')">ID</th>
+                <th (click)="setOrder('name')">NAME</th>
+                <th (click)="setOrder('age')">AGE</th>
+                <th (click)="setOrder('city')">CITY</th>
+                <th></th>
+            </tr>
+            <tr *ngFor="let user of xUsers |orderBy:orderColumn : reverse |
+        paginate: { itemsPerPage: 5, currentPage: currentPage}">
+                <td>{{user.id}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.age}}</td>
+                <td>{{user.city}}</td>
+
+                <td>
+                    <input type="button" value="Details" class="btn btn-info" (click)="viewDetails(user)" />
+
+                    <input type="button" value="Edit" class="btn btn-info" (click)="edit(user)" />
+
+                    <input type="button" value="Delete" class="btn btn-warning" data-toggle="modal" data-target="#ModalDelete" (click)="selectUser(user)"
+                    />
+                </td>
+            </tr>
+        </table>
+        <div class="center">
+            <pagination-controls (pageChange)="loadPage($event)">
+            </pagination-controls>
+        </div>
+
+        <div class="form-group">
+
+            <div class="checkbox-inline">
+
+                <pagination-template #paging="paginationApi" (pageChange)="loadPage($event)">
+
+                    <ul class="pagination">
+
+                        <li>
+                            <a *ngIf="!paging.isFirstPage()" (click)="paging.setCurrent(1)"> First </a>
+                        </li>
+
+                        <li>
+                            <a *ngIf="!paging.isFirstPage()" (click)="paging.previous()"> Back </a>
+                        </li>
+
+                        <li *ngFor="let page of paging.pages" [class.current]="paging.getCurrent() === page.value">
+                            <a (click)="paging.setCurrent(page.value)" *ngIf="paging.getCurrent() !== page.value">
+                                <span>{{ page.label }}</span>
+                            </a>
+                            <a *ngIf="paging.getCurrent() === page.value">
+                                <span>{{ page.label }}</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a *ngIf="!paging.isLastPage()" (click)="paging.next()"> Forward </a>
+                        </li>
+
+                        <li>
+                            <a *ngIf="!paging.isLastPage()" (click)="paging.setCurrent(paging.getLastPage())"> Last </a>
+                        </li>
+
+                    </ul>
+
+                </pagination-template>
+            </div>
+
+            <div class="checkbox-inline">
+                <select class="form-control" [ngModel]="currentPage" (ngModelChange)="turnPage($event)">
+                        <option *ngFor="let page of pagesArray(paging.getLastPage())" [ngValue]="page">{{page}}</option>
+                    </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalDelete" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete User</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>Delete user {{selectedUser? selectedUser.name : ''}}?</p><br />
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="remove()">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            </div>
+
+        </div>
+    </div>
+</div>

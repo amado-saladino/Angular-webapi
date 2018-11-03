@@ -1,0 +1,15 @@
+.center{
+    text-align: center;
+}
+
+.current {
+    cursor: default;
+}
+
+.link{
+    cursor: pointer;
+}
+
+tr.link:hover{
+    color: skyblue
+}
